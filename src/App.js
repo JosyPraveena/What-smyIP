@@ -40,57 +40,45 @@ const useStyles = makeStyles({
 
 const App = () => {
 
-   const [ipData, setipData] = useState(null)
-   const [countryData,setCountryData] = useState(null)
    const [geoData,setGeoData] = useState(null)
+   const [zoom,setZoom] = useState(15)
   
    const classes = useStyles();
 
-  const zoom = 20
 
 
 
- 
- 
-useEffect(() => {
-  const fetchData = async  () =>{
-    try{
-    fetch("https://geo.ipify.org/api/v1?apiKey=at_ZZUZoSsPQmrTyMp6xMFfUsbjq4APM")
-    .then(res =>  res.json())
-    .then(data =>{console.log(data.location.lat)
-      setGeoData({...geoData,
-      ip: data.ip,
-      position: [data.location.lat, data.location.lng],
-      region: data.location.region,
-      city: data.location.city,
-      country: data.location.country
-    })})}
-    catch (err) {
-      console.error(err.message);
-  }
-    try{
-   await fetch(`https://restcountries.eu/rest/v2/alpha/${geoData.country}`)
-    .then(res =>  res.json())
-    .then(data => setGeoData({ ...geoData,
-      capital: data.capital,
-      dialingcode: data.callingCodes,
-      flag: data.flag,
-      timezone: data.timezones,
-      population: data.population,
-      countryName: data.name
-    }))}
-    catch (err) {
-      console.error(err.message);
-  }
+  useEffect(() => {
+    let geo = {}
+    fetch("https://geo.ipify.org/api/v1?apiKey=at_S1qgxj9EL8RaI0pZ2zgiqYMulFhHK")
+    .then(res => res.json())
+  .then(data => {
+    geo = {...data}
+      return fetch(`https://restcountries.eu/rest/v2/alpha/${geo.location.country}`)
+  })
+  .then(res => res.json(res))
+  .then(data => {
+    geo = {...geo, ...data}
+    setGeoData(geo)
+    
+  })
 
-   }
-   fetchData()
-},[]);
+  // (async () => {
+  //   try {
+  //     const ipData = await fetch("https://geo.ipify.org/api/v1?apiKey=at_q0PPYNVebXnhMzJOUModD2NEMlCWC")
+  //     const geoSomething = await 
+  //     setGeoData({...ipData, ...geoSomething})
+  //   } catch (err) {
+  //     console.error(err)
+  //   }
+  // })()
 
- const data = {...ipData,...countryData}
+
+}, [])
 const date = DateTime.local();
+
 if(geoData){
-  console.log(geoData)
+ console.log(typeof geoData.location.lat,geoData.location.lng)
     return (
 
     <div className="App">
@@ -102,53 +90,54 @@ if(geoData){
       <Card className={classes.root} >
       <CardActionArea>
       <div className="leaflet-container">
-      <Map center={data.position} zoom={zoom}>
+      {geoData.location.lat && <Map center={[geoData.location.lat,geoData.location.lng]} zoom={zoom}>
           <TileLayer
             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <Marker position={data.position} />
+          {/* <Marker position={[geoData.location.lat,geoData.location.lng]} /> */}
           <Popup>You are here</Popup>
-        </Map>
+        </Map>}
         </div>
         </CardActionArea>
         <CardContent>
           
           <Typography gutterBottom variant="h5" component="h2">
-            {`Your IP Address is ${data.ip}`}
+            {`Your IP Address is ${geoData.ip}`}
           </Typography>
           <Typography variant="h5"    component="p">
-            {`You are currently located in ${data.city},${data.countryName}`}
+            {`You are currently located in ${geoData.location.region},${geoData.name}`}
           </Typography>
         </CardContent>
       
       <CardContent>
       <Divider />
       <Typography variant="h6">Flag</Typography><br/>
-      <Avatar className={classes.flag} alt="flag" src={data.flag} /><br/>
+      <Avatar className={classes.flag} alt="flag" src={geoData.flag} /><br/>
       <Divider />
-  <Typography variant="h6">{`${data.countryName}'s Population`}</Typography> <br/>
-      <Typography>{data.population}</Typography><br/>
+  <Typography variant="h6">{`${geoData.name}'s Population`}</Typography> <br/>
+      <Typography>{geoData.population}</Typography><br/>
       <Divider /><br/>
       <Typography variant="h6">Local Time</Typography><br/>  
       <Typography>{date.toLocaleString(DateTime.TIME_SIMPLE)}</Typography>
       <Divider /><br/>
       <Typography variant="h6">Capital</Typography><br/>  
-      <Typography>{data.capital}</Typography><br/>
+      <Typography>{geoData.capital}</Typography><br/>
       <Divider /><br/>
       <Typography variant="h6">Dialing Code</Typography><br/>  
-      <Typography>+{data.dialingcode}</Typography>
+      <Typography>+{geoData.callingCodes}</Typography>
       </CardContent>
     </Card>
     </Grid>
       </Grid>
     
     </div>
-  )}
-else{
-  return null;
+  )
 }
+else{
+  return null
 }
 
+  }
 
 export default App;
