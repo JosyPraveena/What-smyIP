@@ -11,16 +11,34 @@ import Divider from '@material-ui/core/Divider';
 import Avatar from '@material-ui/core/Avatar';
 import { DateTime } from "luxon";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     maxWidth: 700,
     maxHeight: "100%",
-    marginTop: "10vh"
+    marginTop: "10vh",
+    [theme.breakpoints.down('md')]:{
+      maxWidth:650
+    },
+    [theme.breakpoints.down('sm')]:{
+      maxWidth:550
+    },
+    [theme.breakpoints.down('xs')]:{
+      maxWidth:350
+    }
   },
   title:{
     marginTop: "3vh",
     fontFamily: 'Caveat',
+    fontSize:"4em",
     fontWeight: 800,
+    [theme.breakpoints.down('md')]:{
+      fontWeight:500,
+      fontSize:"3em"
+    },
+    [theme.breakpoints.down('sm')]:{
+      fontWeight:500,
+      fontSize:"2em"
+    }
   },
   list:{
     maxWidth: 700,
@@ -33,20 +51,33 @@ const useStyles = makeStyles({
     maxWidth: 300
   },
   flag:{
-    marginLeft: "44vh"
+   margin: "0 auto",
+  //   // [theme.breakpoints.down('957')]:{
+  //   //   marginLeft: "40vh"
+  //   // },
+  //   // [theme.breakpoints.down('960')]:{
+  //   //   marginLeft: "38vh"
+  //   // },
+  //   // [theme.breakpoints.down('sm')]:{
+  //   //   marginLeft: "36vh"
+  //   // },
+  //   // [theme.breakpoints.down('xs')]:{
+  //   //   marginLeft: "32vh"
+  //   // },
+  },
+  fields:{
+    fontFamily: 'Caveat',
+    fontSize: '2rem'
   }
-});
+}))
 
 
 const App = () => {
 
    const [geoData,setGeoData] = useState(null)
-   const [zoom,setZoom] = useState(15)
+   const [zoom,setZoom] = useState(20)
   
    const classes = useStyles();
-
-
-
 
   useEffect(() => {
     let geo = {}
@@ -62,70 +93,55 @@ const App = () => {
     setGeoData(geo)
     
   })
-
-  // (async () => {
-  //   try {
-  //     const ipData = await fetch("https://geo.ipify.org/api/v1?apiKey=at_q0PPYNVebXnhMzJOUModD2NEMlCWC")
-  //     const geoSomething = await 
-  //     setGeoData({...ipData, ...geoSomething})
-  //   } catch (err) {
-  //     console.error(err)
-  //   }
-  // })()
-
-
 }, [])
 const date = DateTime.local();
 
 if(geoData){
- console.log(typeof geoData.location.lat,geoData.location.lng)
+ const position =[geoData.location.lat, geoData.location.lng]
     return (
 
     <div className="App">
       <Typography variant="h1" className={classes.title}>
-        Here you are!
+       I found YOU!
       </Typography>
+      <Typography variant="h2" className={classes.title}>
+            {`You are currently located in ${geoData.location.region}, ${geoData.name}`}
+          </Typography>
       <Grid container justify="center">
         <Grid item>
       <Card className={classes.root} >
       <CardActionArea>
       <div className="leaflet-container">
-      {geoData.location.lat && <Map center={[geoData.location.lat,geoData.location.lng]} zoom={zoom}>
-          <TileLayer
-            attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      <Map center={position} zoom={zoom}>
+            <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
           />
-          {/* <Marker position={[geoData.location.lat,geoData.location.lng]} /> */}
+          <Marker position={position}>
           <Popup>You are here</Popup>
-        </Map>}
+          </Marker>
+        </Map>
         </div>
         </CardActionArea>
-        <CardContent>
-          
-          <Typography gutterBottom variant="h5" component="h2">
-            {`Your IP Address is ${geoData.ip}`}
-          </Typography>
-          <Typography variant="h5"    component="p">
-            {`You are currently located in ${geoData.location.region},${geoData.name}`}
-          </Typography>
-        </CardContent>
-      
+        
       <CardContent>
+      <Typography className={classes.fields}variant="h6">ISP</Typography> <br/>
+      <Typography variant="h6" color="textSecondary">{geoData.isp}</Typography>
       <Divider />
-      <Typography variant="h6">Flag</Typography><br/>
+      <Typography className={classes.fields} variant="h6">Flag</Typography><br/>
       <Avatar className={classes.flag} alt="flag" src={geoData.flag} /><br/>
       <Divider />
-  <Typography variant="h6">{`${geoData.name}'s Population`}</Typography> <br/>
-      <Typography>{geoData.population}</Typography><br/>
-      <Divider /><br/>
-      <Typography variant="h6">Local Time</Typography><br/>  
-      <Typography>{date.toLocaleString(DateTime.TIME_SIMPLE)}</Typography>
-      <Divider /><br/>
-      <Typography variant="h6">Capital</Typography><br/>  
-      <Typography>{geoData.capital}</Typography><br/>
-      <Divider /><br/>
-      <Typography variant="h6">Dialing Code</Typography><br/>  
-      <Typography>+{geoData.callingCodes}</Typography>
+        <Typography className={classes.fields}variant="h6">{`${geoData.name}'s Population`}</Typography> <br/>
+      <Typography variant="h6" color="textSecondary">{geoData.population}</Typography>
+      <Divider />
+      <Typography className={classes.fields}variant="h6">Local Time</Typography><br/>  
+      <Typography variant="h6" color="textSecondary">{date.toLocaleString(DateTime.TIME_SIMPLE)}</Typography>
+      <Divider />
+      <Typography className={classes.fields}variant="h6">Capital</Typography><br/>  
+      <Typography variant="h6" color="textSecondary">{geoData.capital}</Typography>
+      <Divider />
+      <Typography className={classes.fields}variant="h6">Dialing Code</Typography><br/>  
+      <Typography variant="h6" color="textSecondary">+{geoData.callingCodes}</Typography>
       </CardContent>
     </Card>
     </Grid>
