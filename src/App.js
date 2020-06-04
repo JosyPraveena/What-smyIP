@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
 
    const [geoData,setGeoData] = useState(null)
-   const [zoom,setZoom] = useState(15)
+   const [zoom,setZoom] = useState(20)
   
    const classes = useStyles();
 
