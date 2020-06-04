@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
 const App = () => {
 
    const [geoData,setGeoData] = useState(null)
-   const [zoom,setZoom] = useState(20)
+   const [zoom,setZoom] = useState(15)
   
    const classes = useStyles();
 
@@ -105,6 +105,9 @@ if(geoData){
        I found YOU!
       </Typography>
       <Typography variant="h2" className={classes.title}>
+            {`Your IP Address is ${geoData.ip}`}
+          </Typography>
+          <Typography variant="h2" className={classes.title}>
             {`You are currently located in ${geoData.location.region}, ${geoData.name}`}
           </Typography>
       <Grid container justify="center">
