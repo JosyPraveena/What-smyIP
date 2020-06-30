@@ -10,6 +10,8 @@ import { Map, Marker, TileLayer,Popup } from "react-leaflet";
 import Divider from '@material-ui/core/Divider';
 import Avatar from '@material-ui/core/Avatar';
 import { DateTime } from "luxon";
+import Skeleton from '@material-ui/lab/Skeleton';
+require("dotenv").config();
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -81,7 +83,7 @@ const App = () => {
 
   useEffect(() => {
     let geo = {}
-    fetch("https://geo.ipify.org/api/v1?apiKey=at_S1qgxj9EL8RaI0pZ2zgiqYMulFhHK")
+    fetch(`https://geo.ipify.org/api/v1?apiKey=${process.env.REACT_APP_API_KEY}`)
     .then(res => res.json())
   .then(data => {
     geo = {...data}

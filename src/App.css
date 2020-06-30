@@ -29,6 +29,6 @@ html{
   body {
     /* The file size of this background image is 93% smaller
        to improve page load speed on mobile internet connections */
-    background-image: url(https://miro.medium.com/max/3200/1*VEJVaGvij0Sh30UIhA5E-A.png) ;
+    background-image: url(https://miro.medium.com/max/3200/1*VEJVaGvij0Sh30UIhA5E-A.png) no-repeat;
   }
 }
